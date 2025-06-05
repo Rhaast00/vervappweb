@@ -1,7 +1,10 @@
+'use client';
+
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { WebsiteData } from '../types';
-import { openai } from '../lib/openai-client';
+import { getOpenAIClient, createMockOpenAIResponse } from '../lib/openai-client';
+import { saveWebsiteAnalysis } from './database-service';
 
 export async function analyzeWebsite(url: string): Promise<WebsiteData> {
   try {
@@ -44,10 +47,21 @@ export async function analyzeWebsite(url: string): Promise<WebsiteData> {
       url
     });
     
-    return {
+    // Create the website data object
+    const websiteData = {
       url,
       ...aiAnalysis
     };
+    
+    // Save to database
+    try {
+      await saveWebsiteAnalysis(websiteData);
+    } catch (dbError) {
+      console.error('Error saving website analysis to database:', dbError);
+      // Continue even if saving to database fails
+    }
+    
+    return websiteData;
   } catch (error) {
     console.error('Error analyzing website:', error);
     throw new Error('Failed to analyze website. Please check the URL and try again.');
@@ -86,14 +100,25 @@ async function analyzeWithAI(data: {
       - elements (array of objects with type and description)
     `;
     
-    const response = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages: [
-        { role: "system", content: "You are a web design analyzer that extracts design information from websites." },
-        { role: "user", content: prompt }
-      ],
-      response_format: { type: "json_object" }
-    });
+    // OpenAI client'ını al
+    const openai = await getOpenAIClient();
+    let response;
+    
+    if (openai) {
+      // OpenAI API ile analiz yap
+      response = await openai.chat.completions.create({
+        model: "gpt-4",
+        messages: [
+          { role: "system", content: "You are a web design analyzer that extracts design information from websites." },
+          { role: "user", content: prompt }
+        ],
+        response_format: { type: "json_object" }
+      });
+    } else {
+      // API anahtarı yoksa mock data kullan
+      console.warn('No OpenAI API key available, using mock data');
+      response = createMockOpenAIResponse(prompt);
+    }
     
     const result = JSON.parse(response.choices[0].message.content || '{}');
     
