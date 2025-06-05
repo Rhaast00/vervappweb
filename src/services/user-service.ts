@@ -1,11 +1,10 @@
 'use client';
 
 import { supabase } from '../lib/supabase-client';
-import { IUserApiKey } from '../types';
-import { getApiKey } from './api-keys-service';
+import { getApiKey, saveApiKey } from './api-keys-service';
 
 // Kullanıcıya ait API anahtarını getir
-export async function getUserApiKey(provider: string): Promise<IUserApiKey | null> {
+export async function getUserApiKey(provider: string): Promise<{apiKey: string} | null> {
   try {
     // Oturum açmış kullanıcı bilgisini al
     const { data: { user } } = await supabase.auth.getUser();
@@ -16,6 +15,8 @@ export async function getUserApiKey(provider: string): Promise<IUserApiKey | nul
       return null;
     }
 
+    console.log(`Getting API key for provider: ${provider}`);
+    
     // api-keys-service kullanarak API anahtarını al
     const apiKey = await getApiKey(provider);
     
@@ -23,90 +24,30 @@ export async function getUserApiKey(provider: string): Promise<IUserApiKey | nul
       console.warn(`No API key found for provider: ${provider}`);
       return null;
     }
+
+    console.log(`API key found for provider: ${provider}`);
     
-    // IUserApiKey format'ında döndür
-    return {
-      id: 'generated-' + Math.random().toString(36).substring(2, 9),
-      userId: user.id,
-      provider: provider,
-      apiKey: apiKey,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
+    // Basitleştirilmiş format döndür
+    return { apiKey };
   } catch (error) {
     console.error('Error getting user API key:', error);
     return null;
   }
 }
 
-// Kullanıcının API anahtarını kaydet
-export async function saveUserApiKey(provider: string, apiKey: string): Promise<IUserApiKey | null> {
+// Kullanıcının API anahtarını kaydet (api-keys-service kullanarak)
+export async function saveUserApiKey(provider: string, apiKey: string): Promise<boolean> {
   try {
-    // Oturum açmış kullanıcı bilgisini al
-    const { data: { user } } = await supabase.auth.getUser();
+    console.log(`Attempting to save API key for provider: ${provider}`);
     
-    // Kullanıcı oturum açmadıysa null döndür
-    if (!user) {
-      throw new Error('No authenticated user found');
-    }
+    // API anahtarını api-keys-service kullanarak kaydet
+    await saveApiKey(provider, apiKey);
+    console.log(`API key saved successfully for provider: ${provider}`);
     
-    // Önce mevcut anahtarı kontrol et
-    const existingKey = await getUserApiKey(provider);
-    
-    if (existingKey) {
-      // Mevcut anahtarı güncelle
-      const { data, error } = await supabase
-        .from('user_api_keys')
-        .update({
-          api_key: apiKey,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', existingKey.id)
-        .select()
-        .single();
-      
-      if (error) {
-        throw error;
-      }
-      
-      return {
-        id: data.id,
-        userId: data.user_id,
-        provider: data.provider,
-        apiKey: data.api_key,
-        createdAt: new Date(data.created_at),
-        updatedAt: new Date(data.updated_at)
-      };
-    } else {
-      // Yeni anahtar oluştur
-      const { data, error } = await supabase
-        .from('user_api_keys')
-        .insert({
-          user_id: user.id,
-          provider: provider,
-          api_key: apiKey,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        })
-        .select()
-        .single();
-      
-      if (error) {
-        throw error;
-      }
-      
-      return {
-        id: data.id,
-        userId: data.user_id,
-        provider: data.provider,
-        apiKey: data.api_key,
-        createdAt: new Date(data.created_at),
-        updatedAt: new Date(data.updated_at)
-      };
-    }
+    return true;
   } catch (error) {
     console.error('Error saving user API key:', error);
-    return null;
+    return false;
   }
 }
 
@@ -140,7 +81,7 @@ export async function deleteUserApiKey(provider: string): Promise<boolean> {
 }
 
 // Kullanıcının tüm API anahtarlarını getir
-export async function getUserApiKeys(): Promise<IUserApiKey[]> {
+export async function getUserApiKeys(): Promise<{apiKey: string}[] | null> {
   try {
     // Oturum açmış kullanıcı bilgisini al
     const { data: { user } } = await supabase.auth.getUser();
@@ -148,7 +89,7 @@ export async function getUserApiKeys(): Promise<IUserApiKey[]> {
     // Kullanıcı oturum açmadıysa boş array döndür
     if (!user) {
       console.warn('No authenticated user found');
-      return [];
+      return null;
     }
     
     // Kullanıcının API anahtarlarını veritabanından al
@@ -159,19 +100,14 @@ export async function getUserApiKeys(): Promise<IUserApiKey[]> {
     
     if (error || !data) {
       console.warn('No API keys found');
-      return [];
+      return null;
     }
     
     return data.map(item => ({
-      id: item.id,
-      userId: item.user_id,
-      provider: item.provider,
-      apiKey: item.api_key,
-      createdAt: new Date(item.created_at),
-      updatedAt: new Date(item.updated_at)
+      apiKey: item.api_key
     }));
   } catch (error) {
     console.error('Error getting user API keys:', error);
-    return [];
+    return null;
   }
 } 

@@ -13,11 +13,13 @@ interface WebsiteContextType {
     css: string;
     preview: string;
   } | null;
-  setRedesignResult: (result: { html: string; css: string; preview: string }) => void;
+  setRedesignResult: (result: { html: string; css: string; preview: string } | null) => void;
   isAnalyzing: boolean;
   setIsAnalyzing: (value: boolean) => void;
   isRedesigning: boolean;
   setIsRedesigning: (value: boolean) => void;
+  selectedModel: string;
+  setSelectedModel: (model: string) => void;
 }
 
 const WebsiteContext = createContext<WebsiteContextType | undefined>(undefined);
@@ -32,6 +34,7 @@ export function WebsiteProvider({ children }: { children: React.ReactNode }) {
   } | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isRedesigning, setIsRedesigning] = useState(false);
+  const [selectedModel, setSelectedModel] = useState<string>('openai');
 
   const value = {
     websiteData,
@@ -44,6 +47,8 @@ export function WebsiteProvider({ children }: { children: React.ReactNode }) {
     setIsAnalyzing,
     isRedesigning,
     setIsRedesigning,
+    selectedModel,
+    setSelectedModel,
   };
 
   return (

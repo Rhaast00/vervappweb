@@ -36,12 +36,22 @@ export interface AIModel {
 export interface WebsiteData {
   url: string;
   colors: string[];
-  fonts: string[];
-  layout: string;
+  fonts: (string | { name: string; purpose?: string })[];
+  layout: string | Record<string, any>;
   elements: Array<{
     type: string;
     description: string;
   }>;
+  images?: Array<{
+    src: string;
+    alt?: string;
+    type: string;
+  }>;
+  contentStructure?: {
+    hierarchy: string;
+    mainSections: string[];
+    contentDensity: string;
+  };
 }
 
 // Yeniden tasarım talebi
