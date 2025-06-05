@@ -1,60 +1,101 @@
-# Next.js Framework Starter
+# VervApp - AI Website Redesign
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/templates/tree/main/next-starter-template)
+VervApp is a web application that uses AI to analyze and redesign websites according to user preferences. Users can input a website URL, get an AI analysis of its design elements, and then choose a design style for the AI to apply in creating a redesigned version.
 
-<!-- dash-content-start -->
+## Features
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app). It's deployed on Cloudflare Workers as a [static website](https://developers.cloudflare.com/workers/static-assets/).
+- **User Authentication**: Secure login with Supabase magic links
+- **Website Analysis**: AI-powered analysis of website design elements including colors, fonts, and layout
+- **Design Style Selection**: Choose from various design styles (minimalist, brutalist, glassmorphism, etc.)
+- **AI Redesign**: Generate a complete redesign of the website based on the selected style
+- **Code Export**: Get the HTML and CSS code for the redesigned website
 
-<!-- dash-content-end -->
+## Tech Stack
 
-Outside of this repo, you can start a new project with this template using [C3](https://developers.cloudflare.com/pages/get-started/c3/) (the `create-cloudflare` CLI):
-
-```bash
-npm create cloudflare@latest -- --template=cloudflare/templates/next-starter-template
-```
-
-A live public deployment of this template is available at [https://next-starter-template.templates.workers.dev](https://next-starter-template.templates.workers.dev)
+- **Frontend**: Next.js, React, TailwindCSS
+- **Authentication**: Supabase Auth
+- **AI**: OpenAI API
+- **Web Scraping**: Axios, Cheerio
 
 ## Getting Started
 
-First, run:
+### Prerequisites
 
-```bash
-npm install
-# or
-yarn install
-# or
-pnpm install
-# or
-bun install
+- Node.js (latest LTS version)
+- npm or yarn
+- Supabase account
+- OpenAI API key
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/vervappweb.git
+   cd vervappweb
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Create a `.env.local` file in the root directory with the following variables:
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   OPENAI_API_KEY=your_openai_api_key
+   ```
+
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Project Structure
+
+```
+vervappweb/
+├── src/
+│   ├── app/
+│   │   ├── analyze/       # Website URL input page
+│   │   ├── design/        # Design style selection page
+│   │   ├── login/         # Authentication page
+│   │   ├── result/        # Redesign results page
+│   │   ├── globals.css    # Global styles
+│   │   ├── layout.tsx     # Root layout with providers
+│   │   └── page.tsx       # Redirect to login
+│   ├── context/
+│   │   ├── AuthContext.tsx    # Authentication context
+│   │   └── WebsiteContext.tsx # Website data context
+│   ├── lib/
+│   │   ├── openai-client.ts   # OpenAI client setup
+│   │   └── supabase-client.ts # Supabase client setup
+│   ├── services/
+│   │   ├── website-analyzer.ts    # Website analysis service
+│   │   └── website-redesigner.ts  # Website redesign service
+│   └── types/
+│       └── index.ts       # TypeScript type definitions
+├── public/                # Static assets
+├── .env.local            # Environment variables (not in repo)
+├── package.json          # Project dependencies
+└── README.md             # Project documentation
 ```
 
-Then run the development server (using the package manager of your choice):
+## Usage Flow
 
-```bash
-npm run dev
-```
+1. User logs in via Supabase magic link authentication
+2. User enters a website URL to analyze
+3. AI analyzes the website and extracts design elements
+4. User selects a design style from the available options
+5. AI generates a redesigned version based on the original website and chosen style
+6. User can view the preview, HTML, and CSS of the redesigned website
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Deployment
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+This project can be deployed on Vercel, Netlify, or any other platform that supports Next.js applications.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## License
 
-## Deploying To Production
-
-| Command                           | Action                                       |
-| :-------------------------------- | :------------------------------------------- |
-| `npm run build`                   | Build your production site                   |
-| `npm run preview`                 | Preview your build locally, before deploying |
-| `npm run build && npm run deploy` | Deploy your production site to Cloudflare    |
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+This project is licensed under the MIT License.
