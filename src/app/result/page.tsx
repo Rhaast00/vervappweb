@@ -122,7 +122,7 @@ export default function Result() {
           ? selectedModel.split(':') 
           : [selectedModel, undefined];
         
-        console.log(`Generating redesign with model: ${modelProvider}${specificModel ? ` (${specificModel})` : ''} and style: ${selectedDesignStyle}`);
+        console.log('Generating redesign with model: ' + modelProvider + (specificModel ? ' (' + specificModel + ')' : '') + ' and style: ' + selectedDesignStyle);
         
         const result = await redesignWebsite(
           {
@@ -161,7 +161,7 @@ export default function Result() {
         ? selectedModel.split(':') 
         : [selectedModel, undefined];
       
-      console.log(`Regenerating redesign with model: ${modelProvider}${specificModel ? ` (${specificModel})` : ''} and style: ${selectedDesignStyle}`);
+      console.log('Regenerating redesign with model: ' + modelProvider + (specificModel ? ' (' + specificModel + ')' : '') + ' and style: ' + selectedDesignStyle);
       
       const result = await redesignWebsite(
         {

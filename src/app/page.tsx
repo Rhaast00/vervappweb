@@ -88,7 +88,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Smart Website Analysis</h3>
               <p className="text-gray-600">
-                Our AI analyzes your website's structure, design, and user experience to identify improvement opportunities.
+                Our AI analyzes your website&apos;s structure, design, and user experience to identify improvement opportunities.
               </p>
             </div>
 

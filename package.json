@@ -37,6 +37,7 @@
     "@types/node": "22.15.19",
     "@types/react": "18.3.12",
     "@types/react-dom": "18.3.1",
+    "cross-env": "^7.0.3",
     "eslint": "8.56.0",
     "eslint-config-next": "14.2.5",
     "postcss": "8.5.3",
@@ -45,14 +46,11 @@
     "wrangler": "4.16.1"
   },
   "scripts": {
-    "build": "NEXT_PRIVATE_STANDALONE=true next build",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv env.d.ts",
-    "check": "npm run build && tsc && wrangler deploy --dry-run",
-    "deploy": "wrangler deploy",
-    "dev": "next dev",
+    "dev": "next dev --port 3001",
+    "build": "cross-env NEXT_PRIVATE_STANDALONE=true next build",
+    "build:win": "set NEXT_PRIVATE_STANDALONE=true && next build",
+    "start": "next start",
     "lint": "next lint",
-    "postbuild": "opennextjs-cloudflare build -s",
-    "preview": "npm run build && wrangler dev",
-    "start": "next start"
+    "deploy": "wrangler deploy"
   }
 }

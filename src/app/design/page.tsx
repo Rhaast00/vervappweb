@@ -183,7 +183,9 @@ export default function Design() {
                     <span className="text-sm font-medium text-gray-900">
                       {typeof font === 'string' 
                         ? font 
-                        : `${(font as { name: string; purpose?: string }).name}${(font as { name: string; purpose?: string }).purpose ? ` (${(font as { name: string; purpose?: string }).purpose})` : ''}`
+                        : (font as { name: string; purpose?: string }).name + 
+                          ((font as { name: string; purpose?: string }).purpose ? 
+                            ' (' + (font as { name: string; purpose?: string }).purpose + ')' : '')
                       }
                     </span>
                   </div>
@@ -256,7 +258,7 @@ export default function Design() {
               Ready to See Your Redesign?
             </h2>
             <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-              Choose a design style above to generate your website's new look with AI-powered design suggestions.
+              Choose a design style above to generate your website&apos;s new look with AI-powered design suggestions.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               {designStyles.slice(0, 3).map((style) => (
