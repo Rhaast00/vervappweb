@@ -8,6 +8,7 @@ export interface IUserApiKey {
   updatedAt: Date;
 }
 
+
 // AI model sağlayıcı
 export interface AIModelProvider {
   id: string;
